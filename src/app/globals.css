@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --background: #121212;
+  --surface: #1e1e1e;
+  --primary: #1DB954;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  background-color: var(--background);
+  color: white;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #1e1e1e;
+}
+::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* XP bar animation */
+@keyframes xpFill {
+  from { width: 0% }
+  to { width: var(--xp-width) }
+}
+
+.xp-bar-fill {
+  animation: xpFill 1s ease-out forwards;
+}
+
+/* Prevent layout shift during hydration */
+.no-fouc {
+  visibility: hidden;
+}
+.no-fouc.ready {
+  visibility: visible;
+}
