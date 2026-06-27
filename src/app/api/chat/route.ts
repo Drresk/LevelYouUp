@@ -9,162 +9,100 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { message } = await req.json()
-
-  // Get user's API key from env
   const groqKey = process.env.GROQ_API_KEY || ''
 
   if (!groqKey) {
-    return NextResponse.json({
-      reply: '⚠️ Configure sua chave de API Groq em /configuracoes para usar o chat.',
-      action: null,
-    })
+    return NextResponse.json({ reply: '⚠️ Configure sua chave Groq em /configuracoes.', action: null })
   }
-
-  const haikuKey = groqKey
-  const sonnetKey = groqKey
 
   let reply = ''
   let action: string | null = null
 
   try {
-    const parsed = await classifyIntent(message, haikuKey)
+    const parsed = await classifyIntent(message, groqKey)
 
     switch (parsed.intent) {
       case 'register_expense': {
-        const { amount, category, description } = parsed.data as {
-          amount: number
-          category: string
-          description: string
+        const { amount, category, description } = parsed.data as { amount: number; category: string; description: string }
+        await supabase.from('transactions').insert({ user_id: user.id, type: 'expense', amount, category: category.toUpperCase(), description: description || message })
+
+        // Budget alert
+        const now = new Date()
+        const monthStart = format(new Date(now.getFullYear(), now.getMonth(), 1), 'yyyy-MM-dd')
+        const [{ data: monthTx }, { data: goal }] = await Promise.all([
+          supabase.from('transactions').select('amount,category').eq('user_id', user.id).eq('type', 'expense').gte('created_at', monthStart),
+          supabase.from('financial_goals').select('monthly_limit').eq('user_id', user.id).eq('category', category.toUpperCase()).single(),
+        ])
+        reply = `✅ R$${Number(amount).toFixed(2)} em ${category.toUpperCase()}`
+        if (goal && monthTx) {
+          const total = monthTx.filter((t) => t.category === category.toUpperCase()).reduce((s, t) => s + Number(t.amount), 0)
+          const pct = (total / goal.monthly_limit) * 100
+          if (pct >= 100) reply += `\n\n🚨 Limite de ${category.toUpperCase()} ultrapassado!`
+          else if (pct >= 80) reply += `\n\n⚠️ ${pct.toFixed(0)}% do limite de ${category.toUpperCase()} usado`
         }
-        await supabase.from('transactions').insert({
-          user_id: user.id,
-          type: 'expense',
-          amount,
-          category: category.toUpperCase(),
-          description: description || message,
-        })
-        reply = `✅ R$${amount.toFixed(2)} adicionado em ${category.toUpperCase()}`
         action = 'registered_expense'
 
-        // Check budget alerts
-        const now = new Date()
-        const { data: monthExpenses } = await supabase
-          .from('transactions')
-          .select('amount, category')
-          .eq('user_id', user.id)
-          .eq('type', 'expense')
-          .gte('created_at', format(new Date(now.getFullYear(), now.getMonth(), 1), 'yyyy-MM-dd'))
-
-        const { data: goals } = await supabase
-          .from('financial_goals')
-          .select('*')
-          .eq('user_id', user.id)
-          .eq('category', category.toUpperCase())
-          .single()
-
-        if (goals && monthExpenses) {
-          const catTotal = monthExpenses
-            .filter((t) => t.category === category.toUpperCase())
-            .reduce((s, t) => s + Number(t.amount), 0)
-          const pct = (catTotal / goals.monthly_limit) * 100
-          if (pct >= 100) {
-            reply += `\n\n🚨 Você ultrapassou o limite de ${category.toUpperCase()} este mês!`
-          } else if (pct >= 80) {
-            reply += `\n\n⚠️ Você usou ${pct.toFixed(0)}% do limite de ${category.toUpperCase()}`
-          }
-        }
+        await supabase.from('user_achievements').upsert({ user_id: user.id, achievement_key: 'first_expense' }, { onConflict: 'user_id,achievement_key' })
         break
       }
 
       case 'register_income': {
-        const { amount, category, description } = parsed.data as {
-          amount: number
-          category: string
-          description: string
-        }
-        await supabase.from('transactions').insert({
-          user_id: user.id,
-          type: 'income',
-          amount,
-          category: (category || 'FREELA').toUpperCase(),
-          description: description || message,
-        })
-        reply = `✅ Entrada de R$${amount.toFixed(2)} registrada em ${(category || 'FREELA').toUpperCase()}`
+        const { amount, category, description } = parsed.data as { amount: number; category: string; description: string }
+        await supabase.from('transactions').insert({ user_id: user.id, type: 'income', amount, category: (category || 'FREELA').toUpperCase(), description: description || message })
+        reply = `✅ Entrada de R$${Number(amount).toFixed(2)} em ${(category || 'FREELA').toUpperCase()}`
         action = 'registered_income'
         break
       }
 
       case 'add_calendar_event': {
-        const { title, date, time, type } = parsed.data as {
-          title: string
-          date: string
-          time: string | null
-          type: string
-        }
-        await supabase.from('calendar_events').insert({
-          user_id: user.id,
-          title,
-          type: type || 'event',
-          date,
-          time,
-          recurrence: 'none',
-        })
-        reply = `📅 Evento criado: "${title}" em ${date}${time ? ` às ${time}` : ''}`
+        const { title, date, time, type } = parsed.data as { title: string; date: string; time: string | null; type: string }
+        await supabase.from('calendar_events').insert({ user_id: user.id, title, type: type || 'event', date, time, recurrence: 'none' })
+        reply = `📅 "${title}" criado${time ? ` às ${time}` : ''} em ${date}`
         action = 'created_event'
         break
       }
 
-      case 'add_shopping_item': {
-        const { name, priority } = parsed.data as {
-          name: string
-          priority: string
-        }
-        await supabase.from('shopping_items').insert({
-          user_id: user.id,
-          name,
-          priority: priority || 'medium',
-        })
-        reply = `🛒 "${name}" adicionado à lista de compras`
-        action = 'added_shopping_item'
+      case 'log_water': {
+        const { amount_ml } = parsed.data as { amount_ml: number }
+        const ml = Math.max(50, Math.min(amount_ml || 250, 2000))
+        await supabase.from('water_logs').insert({ user_id: user.id, amount_ml: ml })
+
+        const today = format(new Date(), 'yyyy-MM-dd')
+        const { data: logs } = await supabase.from('water_logs').select('amount_ml').eq('user_id', user.id).gte('logged_at', today)
+        const total = (logs || []).reduce((s, l) => s + l.amount_ml, 0)
+        reply = `💧 +${ml}ml registrado! Hoje: ${total}ml / 2000ml`
+        if (total >= 2000) reply += '\n\n✅ Meta diária atingida! 🎉'
+        action = 'logged_water'
+        await supabase.from('user_achievements').upsert({ user_id: user.id, achievement_key: 'water_first' }, { onConflict: 'user_id,achievement_key' })
         break
       }
 
       case 'complex_query': {
-        if (!groqKey) {
-          reply = '⚠️ Configure sua chave do Groq em /configuracoes para análises financeiras.'
-          break
-        }
-        // Gather financial context
         const now = new Date()
         const monthStart = format(new Date(now.getFullYear(), now.getMonth(), 1), 'yyyy-MM-dd')
-        const prevMonthStart = format(new Date(now.getFullYear(), now.getMonth() - 1, 1), 'yyyy-MM-dd')
+        const prevStart = format(new Date(now.getFullYear(), now.getMonth() - 1, 1), 'yyyy-MM-dd')
 
-        const [{ data: thisMonth }, { data: lastMonth }, { data: goalsList }] = await Promise.all([
+        const [{ data: thisMonth }, { data: lastMonth }, { data: goals }] = await Promise.all([
           supabase.from('transactions').select('type,amount,category').eq('user_id', user.id).gte('created_at', monthStart),
-          supabase.from('transactions').select('type,amount,category').eq('user_id', user.id).gte('created_at', prevMonthStart).lt('created_at', monthStart),
+          supabase.from('transactions').select('type,amount,category').eq('user_id', user.id).gte('created_at', prevStart).lt('created_at', monthStart),
           supabase.from('financial_goals').select('*').eq('user_id', user.id),
         ])
 
         const summarize = (txs: typeof thisMonth) => {
           if (!txs) return {}
-          const inc = txs.filter((t) => t.type === 'income').reduce((s, t) => s + Number(t.amount), 0)
-          const exp = txs.filter((t) => t.type === 'expense').reduce((s, t) => s + Number(t.amount), 0)
           const byCategory: Record<string, number> = {}
-          txs.filter((t) => t.type === 'expense').forEach((t) => {
-            byCategory[t.category] = (byCategory[t.category] || 0) + Number(t.amount)
-          })
-          return { income: inc, expenses: exp, balance: inc - exp, byCategory }
+          txs.filter((t) => t.type === 'expense').forEach((t) => { byCategory[t.category] = (byCategory[t.category] || 0) + Number(t.amount) })
+          return {
+            income: txs.filter((t) => t.type === 'income').reduce((s, t) => s + Number(t.amount), 0),
+            expenses: txs.filter((t) => t.type === 'expense').reduce((s, t) => s + Number(t.amount), 0),
+            byCategory,
+          }
         }
 
-        const ctx = `
-Mês atual: ${JSON.stringify(summarize(thisMonth), null, 2)}
-Mês anterior: ${JSON.stringify(summarize(lastMonth), null, 2)}
-Metas por categoria: ${JSON.stringify(goalsList?.map((g) => ({ category: g.category, limit: g.monthly_limit })), null, 2)}
-Hoje: ${now.toLocaleDateString('pt-BR')}
-        `.trim()
-
-        reply = await analyzeFinances(message, ctx, sonnetKey)
+        const ctx = `Mês atual: ${JSON.stringify(summarize(thisMonth))}\nMês anterior: ${JSON.stringify(summarize(lastMonth))}\nMetas: ${JSON.stringify(goals?.map((g) => ({ category: g.category, limit: g.monthly_limit })))}\nHoje: ${now.toLocaleDateString('pt-BR')}`
+        reply = await analyzeFinances(message, ctx, groqKey)
         action = 'complex_query'
+        await supabase.from('user_achievements').upsert({ user_id: user.id, achievement_key: 'first_analysis' }, { onConflict: 'user_id,achievement_key' })
         break
       }
     }
@@ -173,7 +111,6 @@ Hoje: ${now.toLocaleDateString('pt-BR')}
     reply = '❌ Erro ao processar. Verifique sua chave de API.'
   }
 
-  // Save to history
   await supabase.from('chat_messages').insert([
     { user_id: user.id, role: 'user', content: message, action_taken: null },
     { user_id: user.id, role: 'assistant', content: reply, action_taken: action },

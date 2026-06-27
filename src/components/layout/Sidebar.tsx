@@ -1,20 +1,17 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { Home, DollarSign, Sword, Calendar, ShoppingCart, Trophy, Settings, LogOut, Zap } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
+import { Home, Sword, Users, ShoppingBag, User, LogOut, Zap } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
 
-const NAV_ITEMS = [
-  { href: '/dashboard', icon: Home, label: 'Dashboard' },
-  { href: '/financeiro', icon: DollarSign, label: 'Financeiro' },
+const NAV = [
+  { href: '/dashboard', icon: Home, label: 'Home' },
   { href: '/skills', icon: Sword, label: 'Skills' },
-  { href: '/calendario', icon: Calendar, label: 'Calendário' },
-  { href: '/compras', icon: ShoppingCart, label: 'Compras' },
-  { href: '/conquistas', icon: Trophy, label: 'Conquistas' },
-  { href: '/configuracoes', icon: Settings, label: 'Configurações' },
+  { href: '/feed', icon: Users, label: 'Feed' },
+  { href: '/shop', icon: ShoppingBag, label: 'Shop' },
+  { href: '/profile', icon: User, label: 'Perfil' },
 ]
 
 export default function Sidebar() {
@@ -22,51 +19,44 @@ export default function Sidebar() {
   const router = useRouter()
 
   async function handleLogout() {
-    const supabase = createClient()
-    await supabase.auth.signOut()
+    await createClient().auth.signOut()
     router.push('/login')
   }
 
   return (
-    <aside className="hidden md:flex flex-col w-64 min-h-screen bg-surface border-r border-surface-3 fixed left-0 top-0 z-30">
+    <aside className="hidden md:flex flex-col w-60 min-h-screen bg-surface border-r border-[rgba(139,92,246,0.15)] fixed left-0 top-0 z-30">
       {/* Logo */}
-      <div className="flex items-center gap-3 p-6 border-b border-surface-3">
-        <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center">
-          <Zap size={20} className="text-black fill-black" />
+      <div className="flex items-center gap-3 p-5 border-b border-[rgba(139,92,246,0.15)]">
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-purple to-gold flex items-center justify-center shadow-purple">
+          <Zap size={18} className="text-white" />
         </div>
-        <span className="text-xl font-bold text-white">LevelUp</span>
+        <div>
+          <span className="text-base font-black text-text-base tracking-tight">LevelYouUp</span>
+          <p className="text-[10px] text-text-dim leading-none">RPG do dia a dia</p>
+        </div>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 p-4 space-y-1">
-        {NAV_ITEMS.map(({ href, icon: Icon, label }) => {
+      <nav className="flex-1 p-3 space-y-1">
+        {NAV.map(({ href, icon: Icon, label }) => {
           const active = pathname === href || pathname.startsWith(href + '/')
           return (
-            <Link
-              key={href}
-              href={href}
-              className={cn(
-                'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all',
+            <Link key={href} href={href}
+              className={cn('flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all',
                 active
-                  ? 'bg-primary-muted text-primary'
-                  : 'text-text-muted hover:bg-surface-2 hover:text-white'
-              )}
-            >
-              <Icon size={18} />
+                  ? 'bg-purple-muted text-purple border border-[rgba(139,92,246,0.3)] shadow-purple/20'
+                  : 'text-text-muted hover:bg-surface-2 hover:text-text-base')}>
+              <Icon size={17} />
               {label}
             </Link>
           )
         })}
       </nav>
 
-      {/* Logout */}
-      <div className="p-4 border-t border-surface-3">
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-text-muted hover:bg-surface-2 hover:text-danger transition-all w-full"
-        >
-          <LogOut size={18} />
-          Sair
+      <div className="p-3 border-t border-[rgba(139,92,246,0.15)]">
+        <button onClick={handleLogout}
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-text-dim hover:bg-surface-2 hover:text-danger transition-all w-full">
+          <LogOut size={17} /> Sair
         </button>
       </div>
     </aside>

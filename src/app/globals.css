@@ -2,57 +2,85 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap');
 
 :root {
-  --background: #121212;
-  --surface: #1e1e1e;
-  --primary: #1DB954;
+  --bg: #080818;
+  --surface: #0e0e26;
+  --gold: #f59e0b;
+  --cyan: #06b6d4;
+  --purple: #8b5cf6;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
-html,
-body {
-  background-color: var(--background);
-  color: white;
+html, body {
+  background-color: var(--bg);
+  color: #f1f5f9;
   font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #1e1e1e;
-}
-::-webkit-scrollbar-thumb {
-  background: #444;
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: #0e0e26; }
+::-webkit-scrollbar-thumb { background: #252560; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #8b5cf6; }
+
+/* RPG card base */
+.rpg-card {
+  background: linear-gradient(135deg, #0e0e26 0%, #12123a 100%);
+  border: 1px solid rgba(139,92,246,0.2);
+  border-radius: 16px;
 }
 
-/* XP bar animation */
+.rpg-card-gold {
+  background: linear-gradient(135deg, #0e0e26 0%, #1a150a 100%);
+  border: 1px solid rgba(245,158,11,0.3);
+}
+
+/* Glow text */
+.glow-gold { text-shadow: 0 0 20px rgba(245,158,11,0.6); }
+.glow-cyan { text-shadow: 0 0 20px rgba(6,182,212,0.6); }
+.glow-purple { text-shadow: 0 0 20px rgba(139,92,246,0.6); }
+
+/* XP bar */
 @keyframes xpFill {
   from { width: 0% }
   to { width: var(--xp-width) }
 }
+.xp-bar-fill { animation: xpFill 1s ease-out forwards; }
 
-.xp-bar-fill {
-  animation: xpFill 1s ease-out forwards;
+/* Shimmer effect for legendary items */
+.shimmer-bg {
+  background: linear-gradient(90deg, transparent 0%, rgba(245,158,11,0.3) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
 }
 
-/* Prevent layout shift during hydration */
-.no-fouc {
-  visibility: hidden;
+/* Rarity borders */
+.border-rarity-common  { border-color: rgba(100,116,139,0.5); }
+.border-rarity-rare    { border-color: rgba(59,130,246,0.5); box-shadow: 0 0 10px rgba(59,130,246,0.15); }
+.border-rarity-epic    { border-color: rgba(139,92,246,0.6); box-shadow: 0 0 15px rgba(139,92,246,0.2); }
+.border-rarity-legendary { border-color: rgba(245,158,11,0.7); box-shadow: 0 0 20px rgba(245,158,11,0.25); }
+
+/* Score ring colors */
+.score-ring-gray   { stroke: #64748b; }
+.score-ring-blue   { stroke: #3b82f6; filter: drop-shadow(0 0 6px rgba(59,130,246,0.5)); }
+.score-ring-purple { stroke: #8b5cf6; filter: drop-shadow(0 0 6px rgba(139,92,246,0.5)); }
+.score-ring-gold   { stroke: #f59e0b; filter: drop-shadow(0 0 8px rgba(245,158,11,0.6)); }
+
+/* Water fill animation */
+@keyframes waterRise {
+  from { height: 0% }
+  to { height: var(--water-pct) }
 }
-.no-fouc.ready {
-  visibility: visible;
+.water-fill { animation: waterRise 1s ease-out forwards; }
+
+/* Stat number style */
+.stat-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }

@@ -165,24 +165,7 @@ export default function PomodoroTimer({ initialSkillId }: PomodoroTimerProps) {
     return () => { if (timerRef.current) clearInterval(timerRef.current) }
   }, [running, phase])
 
-  async function handleLevelUpClose(reward: string) {
-    if (reward && selectedSkillId) {
-      const supabase = createClient()
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        await supabase.from('level_rewards').insert({
-          user_id: user.id,
-          skill_id: selectedSkillId,
-          level_reached: levelUpData!.level,
-          reward_description: reward,
-        })
-        // Check first_reward achievement
-        await supabase.from('user_achievements').upsert(
-          { user_id: user.id, achievement_key: 'first_reward' },
-          { onConflict: 'user_id,achievement_key' }
-        )
-      }
-    }
+  async function handleLevelUpClose() {
     setLevelUpData(null)
   }
 
