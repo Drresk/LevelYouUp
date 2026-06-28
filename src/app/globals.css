@@ -2,85 +2,175 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
 
 :root {
-  --bg: #080818;
-  --surface: #0e0e26;
-  --gold: #f59e0b;
-  --cyan: #06b6d4;
-  --purple: #8b5cf6;
+  --bg: #0D0D1A;
+  --surface: #16163A;
+  --purple: #6B2FD4;
+  --gold: #F5A623;
+  --cyan: #00D4FF;
+  --emerald: #00C875;
+  --crimson: #FF3B5C;
 }
 
 * { box-sizing: border-box; }
 
 html, body {
   background-color: var(--bg);
-  color: #f1f5f9;
+  color: #F0F0FF;
   font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
-/* Scrollbar */
+/* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
-::-webkit-scrollbar-track { background: #0e0e26; }
-::-webkit-scrollbar-thumb { background: #252560; border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: #8b5cf6; }
+::-webkit-scrollbar-track { background: #0D0D1A; }
+::-webkit-scrollbar-thumb { background: #282870; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #6B2FD4; }
 
-/* RPG card base */
-.rpg-card {
-  background: linear-gradient(135deg, #0e0e26 0%, #12123a 100%);
-  border: 1px solid rgba(139,92,246,0.2);
-  border-radius: 16px;
+/* ── Clay Card Base ── */
+.clay-card {
+  border-radius: 24px;
+  background: linear-gradient(145deg, #1E1E50 0%, #16163A 100%);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5), 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.clay-card:hover {
+  box-shadow: 0 12px 32px rgba(0,0,0,0.6), 0 6px 16px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.1);
+  transform: translateY(-2px);
 }
 
-.rpg-card-gold {
-  background: linear-gradient(135deg, #0e0e26 0%, #1a150a 100%);
-  border: 1px solid rgba(245,158,11,0.3);
+/* ── Colored Clay Cards ── */
+.clay-purple {
+  border-radius: 24px;
+  background: linear-gradient(145deg, #7B3FE4 0%, #5B1FC4 100%);
+  box-shadow: 0 8px 24px rgba(107,47,212,0.5), 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+.clay-gold {
+  border-radius: 24px;
+  background: linear-gradient(145deg, #FFB938 0%, #D98B10 100%);
+  box-shadow: 0 8px 24px rgba(245,166,35,0.45), 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.25);
+}
+.clay-cyan {
+  border-radius: 24px;
+  background: linear-gradient(145deg, #20E8FF 0%, #00AACF 100%);
+  box-shadow: 0 8px 24px rgba(0,212,255,0.4), 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+.clay-emerald {
+  border-radius: 24px;
+  background: linear-gradient(145deg, #10E888 0%, #00A060 100%);
+  box-shadow: 0 8px 24px rgba(0,200,117,0.4), 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+.clay-crimson {
+  border-radius: 24px;
+  background: linear-gradient(145deg, #FF5575 0%, #CC1A3A 100%);
+  box-shadow: 0 8px 24px rgba(255,59,92,0.4), 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+.clay-dark {
+  border-radius: 24px;
+  background: linear-gradient(145deg, #1E1E50 0%, #0D0D2A 100%);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
 }
 
-/* Glow text */
-.glow-gold { text-shadow: 0 0 20px rgba(245,158,11,0.6); }
-.glow-cyan { text-shadow: 0 0 20px rgba(6,182,212,0.6); }
-.glow-purple { text-shadow: 0 0 20px rgba(139,92,246,0.6); }
-
-/* XP bar */
-@keyframes xpFill {
-  from { width: 0% }
-  to { width: var(--xp-width) }
+/* ── Clay Buttons ── */
+.clay-btn {
+  border-radius: 100px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+  transition: box-shadow 0.15s, transform 0.1s;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
 }
-.xp-bar-fill { animation: xpFill 1s ease-out forwards; }
+.clay-btn:hover {
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5), 0 3px 6px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.25);
+  transform: translateY(-1px);
+}
+.clay-btn:active {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5), inset 0 2px 6px rgba(0,0,0,0.4);
+  transform: translateY(2px);
+}
+.clay-btn-purple {
+  background: linear-gradient(145deg, #7B3FE4, #5B1FC4);
+  box-shadow: 0 6px 20px rgba(107,47,212,0.5), inset 0 1px 0 rgba(255,255,255,0.25);
+  color: #fff;
+}
+.clay-btn-gold {
+  background: linear-gradient(145deg, #FFB938, #D98B10);
+  box-shadow: 0 6px 20px rgba(245,166,35,0.5), inset 0 1px 0 rgba(255,255,255,0.3);
+  color: #1A1A00;
+}
+.clay-btn-emerald {
+  background: linear-gradient(145deg, #10E888, #00A060);
+  box-shadow: 0 6px 20px rgba(0,200,117,0.4), inset 0 1px 0 rgba(255,255,255,0.25);
+  color: #001A0A;
+}
+.clay-btn-crimson {
+  background: linear-gradient(145deg, #FF5575, #CC1A3A);
+  box-shadow: 0 6px 20px rgba(255,59,92,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+  color: #fff;
+}
 
-/* Shimmer effect for legendary items */
-.shimmer-bg {
-  background: linear-gradient(90deg, transparent 0%, rgba(245,158,11,0.3) 50%, transparent 100%);
+/* ── XP Bar ── */
+.clay-xp-bar {
+  border-radius: 100px;
+  background: #282870;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.4), inset 0 -1px 0 rgba(255,255,255,0.05);
+  overflow: hidden;
+}
+.clay-xp-fill {
+  border-radius: 100px;
+  box-shadow: 0 0 8px currentColor;
+}
+
+/* ── Rarity borders (clay style) ── */
+.rarity-common  { box-shadow: 0 4px 12px rgba(100,116,139,0.3), inset 0 1px 0 rgba(255,255,255,0.06); border: 1px solid rgba(100,116,139,0.4); }
+.rarity-rare    { box-shadow: 0 4px 16px rgba(59,130,246,0.35), inset 0 1px 0 rgba(255,255,255,0.1); border: 1px solid rgba(59,130,246,0.5); }
+.rarity-epic    { box-shadow: 0 4px 20px rgba(107,47,212,0.45), inset 0 1px 0 rgba(255,255,255,0.12); border: 1px solid rgba(107,47,212,0.6); }
+.rarity-legendary { box-shadow: 0 4px 24px rgba(245,166,35,0.5), inset 0 1px 0 rgba(255,255,255,0.2); border: 1px solid rgba(245,166,35,0.7); animation: pulseGold 2s ease-in-out infinite; }
+
+/* ── Score ring ── */
+.score-ring-gray   { stroke: #64748b; }
+.score-ring-blue   { stroke: #3b82f6; filter: drop-shadow(0 0 6px rgba(59,130,246,0.6)); }
+.score-ring-purple { stroke: #6B2FD4; filter: drop-shadow(0 0 8px rgba(107,47,212,0.6)); }
+.score-ring-gold   { stroke: #F5A623; filter: drop-shadow(0 0 10px rgba(245,166,35,0.7)); }
+
+/* ── Typography ── */
+.font-display { font-family: 'Nunito', sans-serif; }
+.stat-num { font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+
+/* ── Water fill ── */
+@keyframes waterRise { from { height: 0% } to { height: var(--water-pct) } }
+.water-fill { animation: waterRise 1s ease-out forwards; }
+
+/* ── Pixel art icon rendering ── */
+.pixel-icon { image-rendering: pixelated; image-rendering: crisp-edges; }
+
+/* ── Shimmer (legendary) ── */
+@keyframes shimmer {
+  0% { background-position: -200% 0 }
+  100% { background-position: 200% 0 }
+}
+.shimmer-legendary {
+  background: linear-gradient(90deg, transparent 0%, rgba(245,166,35,0.3) 50%, transparent 100%);
   background-size: 200% 100%;
   animation: shimmer 2s linear infinite;
 }
 
-/* Rarity borders */
-.border-rarity-common  { border-color: rgba(100,116,139,0.5); }
-.border-rarity-rare    { border-color: rgba(59,130,246,0.5); box-shadow: 0 0 10px rgba(59,130,246,0.15); }
-.border-rarity-epic    { border-color: rgba(139,92,246,0.6); box-shadow: 0 0 15px rgba(139,92,246,0.2); }
-.border-rarity-legendary { border-color: rgba(245,158,11,0.7); box-shadow: 0 0 20px rgba(245,158,11,0.25); }
-
-/* Score ring colors */
-.score-ring-gray   { stroke: #64748b; }
-.score-ring-blue   { stroke: #3b82f6; filter: drop-shadow(0 0 6px rgba(59,130,246,0.5)); }
-.score-ring-purple { stroke: #8b5cf6; filter: drop-shadow(0 0 6px rgba(139,92,246,0.5)); }
-.score-ring-gold   { stroke: #f59e0b; filter: drop-shadow(0 0 8px rgba(245,158,11,0.6)); }
-
-/* Water fill animation */
-@keyframes waterRise {
-  from { height: 0% }
-  to { height: var(--water-pct) }
+/* ── Keyframes ── */
+@keyframes pulseGold {
+  0%,100% { box-shadow: 0 4px 24px rgba(245,166,35,0.3), inset 0 1px 0 rgba(255,255,255,0.15) }
+  50%      { box-shadow: 0 6px 32px rgba(245,166,35,0.6), inset 0 1px 0 rgba(255,255,255,0.2) }
 }
-.water-fill { animation: waterRise 1s ease-out forwards; }
-
-/* Stat number style */
-.stat-num {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+@keyframes float {
+  0%,100% { transform: translateY(0) }
+  50% { transform: translateY(-6px) }
+}
+@keyframes bounceIn {
+  0% { transform: scale(0.3); opacity: 0 }
+  50% { transform: scale(1.1) }
+  70% { transform: scale(0.9) }
+  100% { transform: scale(1); opacity: 1 }
 }

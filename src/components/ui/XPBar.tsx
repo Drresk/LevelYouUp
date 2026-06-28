@@ -12,36 +12,28 @@ interface XPBarProps {
   color?: string
 }
 
-export default function XPBar({
-  currentXP,
-  xpToNextLevel,
-  level,
-  showText = true,
-  height = 8,
-  color = '#1DB954',
-}: XPBarProps) {
+export default function XPBar({ currentXP, xpToNextLevel, level, showText = true, height = 10, color = '#6B2FD4' }: XPBarProps) {
   const percent = xpProgress(currentXP, xpToNextLevel)
 
   return (
     <div className="w-full">
       {showText && (
-        <div className="flex justify-between text-xs text-text-muted mb-1">
-          <span>Nível {level}</span>
-          <span>
-            {currentXP}/{xpToNextLevel} XP
-          </span>
+        <div className="flex justify-between text-xs mb-1.5">
+          <span className="font-display font-bold text-text-muted">Nível {level}</span>
+          <span className="stat-num text-text-dim">{currentXP}/{xpToNextLevel} XP</span>
         </div>
       )}
-      <div
-        className="w-full bg-surface-3 rounded-full overflow-hidden"
-        style={{ height }}
-      >
+      <div className="clay-xp-bar w-full" style={{ height }}>
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${percent}%` }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-          className="h-full rounded-full"
-          style={{ backgroundColor: color }}
+          transition={{ duration: 0.9, ease: 'easeOut' }}
+          className="h-full clay-xp-fill"
+          style={{
+            background: `linear-gradient(90deg, ${color}99, ${color})`,
+            boxShadow: `0 0 8px ${color}80`,
+            borderRadius: '100px',
+          }}
         />
       </div>
     </div>

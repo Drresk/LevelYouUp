@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Zap, Mail, Lock, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
+import PixelIcon from '@/components/ui/PixelIcon'
 
 type Mode = 'login' | 'signup' | 'magic'
 
@@ -22,25 +23,16 @@ export default function LoginPage() {
 
     if (mode === 'login') {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
-      if (error) {
-        setMessage({ type: 'error', text: error.message })
-      } else {
-        window.location.href = '/dashboard'
-      }
+      if (error) setMessage({ type: 'error', text: error.message })
+      else window.location.href = '/dashboard'
     } else if (mode === 'signup') {
       const { error } = await supabase.auth.signUp({ email, password })
-      if (error) {
-        setMessage({ type: 'error', text: error.message })
-      } else {
-        setMessage({ type: 'success', text: 'Conta criada! Verifique seu email para confirmar, ou entre já.' })
-      }
+      if (error) setMessage({ type: 'error', text: error.message })
+      else setMessage({ type: 'success', text: 'Conta criada! Verifique seu email para confirmar, ou entre já.' })
     } else {
       const { error } = await supabase.auth.signInWithOtp({ email })
-      if (error) {
-        setMessage({ type: 'error', text: error.message })
-      } else {
-        setMessage({ type: 'success', text: 'Link enviado! Verifique seu email.' })
-      }
+      if (error) setMessage({ type: 'error', text: error.message })
+      else setMessage({ type: 'success', text: '✨ Link enviado! Verifique seu email.' })
     }
 
     setLoading(false)
@@ -53,78 +45,108 @@ export default function LoginPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-sm">
+    <div className="min-h-screen flex items-center justify-center p-4 overflow-hidden"
+      style={{
+        background: 'radial-gradient(ellipse at 50% 0%, rgba(107,47,212,0.25) 0%, #0D0D1A 60%)',
+      }}>
+      {/* Background decorative orbs */}
+      <div className="absolute top-20 left-1/4 w-64 h-64 rounded-full opacity-10 blur-3xl"
+        style={{ background: '#6B2FD4' }} />
+      <div className="absolute bottom-20 right-1/4 w-48 h-48 rounded-full opacity-10 blur-3xl"
+        style={{ background: '#00D4FF' }} />
+
+      <div className="w-full max-w-sm relative z-10">
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center mb-4 shadow-lg shadow-primary/30">
-            <Zap size={32} className="text-black fill-black" />
-          </div>
-          <h1 className="text-3xl font-black text-white">LevelUp</h1>
-          <p className="text-text-muted text-sm mt-1">Seu assistente pessoal gamificado</p>
-        </div>
-
-        {/* Mode toggle */}
-        <div className="flex bg-surface rounded-xl p-1 mb-6">
-          {MODES.map(({ key, label }) => (
-            <button
-              key={key}
-              onClick={() => { setMode(key); setMessage(null) }}
-              className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${
-                mode === key ? 'bg-surface-3 text-white' : 'text-text-muted'
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="relative">
-            <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="seu@email.com"
-              required
-              className="w-full bg-surface border border-surface-3 rounded-xl px-4 py-3 pl-9 text-white placeholder:text-text-dim text-sm focus:outline-none focus:border-primary transition-colors"
-            />
-          </div>
-
-          {mode !== 'magic' && (
-            <div className="relative">
-              <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder={mode === 'signup' ? 'Senha (mín. 6 caracteres)' : 'Senha'}
-                required
-                minLength={6}
-                className="w-full bg-surface border border-surface-3 rounded-xl px-4 py-3 pl-9 text-white placeholder:text-text-dim text-sm focus:outline-none focus:border-primary transition-colors"
-              />
+          <div className="mb-4 animate-float">
+            <div className="w-20 h-20 rounded-clay flex items-center justify-center"
+              style={{
+                background: 'linear-gradient(145deg, #7B3FE4, #5B1FC4)',
+                boxShadow: '0 12px 32px rgba(107,47,212,0.6), inset 0 2px 0 rgba(255,255,255,0.25)',
+              }}>
+              <PixelIcon icon="lightning" size={40} />
             </div>
-          )}
+          </div>
 
-          {message && (
-            <p className={`text-sm px-3 py-2 rounded-lg ${
-              message.type === 'error' ? 'bg-danger/10 text-danger' : 'bg-success/10 text-success'
-            }`}>
-              {message.text}
-            </p>
-          )}
+          <h1 className="font-display text-4xl font-black mb-1"
+            style={{
+              background: 'linear-gradient(135deg, #FFFFFF 0%, #C8A8FF 50%, #F5A623 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              textShadow: 'none',
+              filter: 'drop-shadow(0 2px 8px rgba(107,47,212,0.4))',
+            }}>
+            LevelYouUp
+          </h1>
+          <p className="text-text-muted text-sm font-medium">Level yourself up. Every single day.</p>
+        </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-primary hover:bg-primary-hover text-black font-bold py-3 rounded-xl transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            {loading && <Loader2 size={16} className="animate-spin" />}
-            {mode === 'login' ? 'Entrar' : mode === 'signup' ? 'Criar conta' : 'Enviar link'}
-          </button>
-        </form>
+        {/* Card */}
+        <div className="clay-card p-6">
+          {/* Mode toggle */}
+          <div className="flex p-1 mb-5 rounded-clay-sm" style={{ background: '#0D0D2A' }}>
+            {MODES.map(({ key, label }) => (
+              <button key={key} onClick={() => { setMode(key); setMessage(null) }}
+                className="flex-1 py-2 rounded-xl text-xs font-bold font-display transition-all"
+                style={mode === key ? {
+                  background: 'linear-gradient(145deg, #7B3FE4, #5B1FC4)',
+                  color: '#fff',
+                  boxShadow: '0 4px 12px rgba(107,47,212,0.4), inset 0 1px 0 rgba(255,255,255,0.2)',
+                } : { color: '#8888BB' }}>
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {/* Inputs */}
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <div>
+              <label className="text-xs text-text-muted font-medium mb-1.5 block">Email</label>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+                placeholder="seu@email.com" required
+                className="w-full text-sm text-text-base placeholder:text-text-dim px-4 py-3 rounded-clay-sm focus:outline-none transition-all"
+                style={{
+                  background: '#0D0D2A',
+                  boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.4), inset 0 -1px 0 rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(107,47,212,0.2)',
+                }} />
+            </div>
+
+            {mode !== 'magic' && (
+              <div>
+                <label className="text-xs text-text-muted font-medium mb-1.5 block">Senha</label>
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
+                  placeholder={mode === 'signup' ? 'Mín. 6 caracteres' : 'Sua senha'} required minLength={6}
+                  className="w-full text-sm text-text-base placeholder:text-text-dim px-4 py-3 rounded-clay-sm focus:outline-none transition-all"
+                  style={{
+                    background: '#0D0D2A',
+                    boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.4), inset 0 -1px 0 rgba(255,255,255,0.04)',
+                    border: '1px solid rgba(107,47,212,0.2)',
+                  }} />
+              </div>
+            )}
+
+            {message && (
+              <div className="px-4 py-3 rounded-clay-sm text-sm font-medium"
+                style={message.type === 'error'
+                  ? { background: 'rgba(255,59,92,0.15)', color: '#FF3B5C', border: '1px solid rgba(255,59,92,0.3)' }
+                  : { background: 'rgba(0,200,117,0.15)', color: '#00C875', border: '1px solid rgba(0,200,117,0.3)' }}>
+                {message.text}
+              </div>
+            )}
+
+            <button type="submit" disabled={loading}
+              className="clay-btn clay-btn-purple w-full py-3.5 text-sm flex items-center justify-center gap-2 disabled:opacity-60 mt-2">
+              {loading && <Loader2 size={16} className="animate-spin" />}
+              {mode === 'login' ? '⚔️ Entrar' : mode === 'signup' ? '✨ Criar conta' : '🔗 Enviar link'}
+            </button>
+          </form>
+        </div>
+
+        <p className="text-center text-xs text-text-dim mt-4">
+          Feito para quem quer evoluir todo dia.
+        </p>
       </div>
     </div>
   )

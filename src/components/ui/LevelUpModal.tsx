@@ -2,23 +2,19 @@
 
 import { useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Coins, Shield, RefreshCw, Zap } from 'lucide-react'
 import confetti from 'canvas-confetti'
+import PixelIcon from '@/components/ui/PixelIcon'
 
-export interface LevelUpReward {
-  coins: number
-  shields: number
-  tokens: number
-}
+export interface LevelUpReward { coins: number; shields: number; tokens: number }
 
 function getLevelReward(level: number): LevelUpReward {
-  const base: LevelUpReward = { coins: 50, shields: 0, tokens: 0 }
-  if (level === 5)  { base.shields = 1 }
-  if (level === 10) { base.tokens = 1; base.coins = 150 }
-  if (level === 15) { base.shields = 2; base.coins = 100 }
-  if (level === 20) { base.tokens = 1; base.coins = 300 }
-  if (level > 20 && level % 10 === 0) { base.tokens = 1; base.coins = 500 }
-  return base
+  const r: LevelUpReward = { coins: 50, shields: 0, tokens: 0 }
+  if (level === 5)  { r.shields = 1 }
+  if (level === 10) { r.tokens = 1; r.coins = 150 }
+  if (level === 15) { r.shields = 2; r.coins = 100 }
+  if (level === 20) { r.tokens = 1; r.coins = 300 }
+  if (level > 20 && level % 10 === 0) { r.tokens = 1; r.coins = 500 }
+  return r
 }
 
 interface LevelUpModalProps {
@@ -31,60 +27,69 @@ export default function LevelUpModal({ skillName, newLevel, onClose }: LevelUpMo
   const reward = getLevelReward(newLevel)
 
   useEffect(() => {
-    confetti({ particleCount: 180, spread: 80, origin: { y: 0.6 }, colors: ['#f59e0b', '#8b5cf6', '#ffffff', '#06b6d4'] })
+    confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 }, colors: ['#F5A623', '#6B2FD4', '#FFFFFF', '#00D4FF'] })
   }, [])
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm">
       <motion.div
-        initial={{ scale: 0.4, opacity: 0 }}
+        initial={{ scale: 0.3, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: 'spring', damping: 14 }}
-        className="w-full max-w-sm mx-4 rounded-3xl overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #0e0e26, #1a0e3a)', border: '1px solid rgba(245,158,11,0.4)', boxShadow: '0 0 60px rgba(245,158,11,0.2)' }}
-      >
-        {/* Header glow bar */}
-        <div className="h-1 w-full" style={{ background: 'linear-gradient(90deg, #8b5cf6, #f59e0b, #8b5cf6)' }} />
+        transition={{ type: 'spring', damping: 12, stiffness: 200 }}
+        className="w-full max-w-sm mx-4 overflow-hidden rounded-clay"
+        style={{
+          background: 'linear-gradient(145deg, #1E1E50, #0D0D2A)',
+          border: '2px solid rgba(245,166,35,0.5)',
+          boxShadow: '0 24px 64px rgba(245,166,35,0.3), 0 8px 32px rgba(0,0,0,0.6), inset 0 2px 0 rgba(255,255,255,0.1)',
+        }}>
+        {/* Gold bar */}
+        <div className="h-1.5" style={{ background: 'linear-gradient(90deg, #6B2FD4, #F5A623, #6B2FD4)' }} />
 
         <div className="p-7 text-center">
-          <motion.div animate={{ rotate: [0,-12,12,-12,0], scale: [1,1.2,1] }} transition={{ duration: 0.7 }}
-            className="text-6xl mb-3">⚔️</motion.div>
+          <motion.div animate={{ rotate: [0,-15,15,-15,0], scale: [1,1.3,1] }} transition={{ duration: 0.7 }}
+            className="flex justify-center mb-4">
+            <PixelIcon icon="star" size={56} />
+          </motion.div>
 
-          <p className="text-xs font-bold tracking-widest text-purple uppercase mb-1">Level Up!</p>
-          <h2 className="text-3xl font-black text-gold glow-gold mb-1">Nível {newLevel}</h2>
-          <p className="text-text-muted text-sm mb-6">{skillName}</p>
+          <p className="font-display text-xs font-black tracking-widest uppercase mb-1" style={{ color: '#9B7FE8' }}>
+            LEVEL UP!
+          </p>
+          <h2 className="font-display text-4xl font-black mb-1 animate-pulse-gold" style={{ color: '#F5A623' }}>
+            Nível {newLevel}
+          </h2>
+          <p className="text-text-muted text-sm font-medium mb-6">{skillName}</p>
 
           {/* Rewards */}
-          <div className="bg-surface-2 rounded-2xl p-4 mb-6 space-y-2">
-            <p className="text-xs text-text-dim uppercase tracking-widest mb-3">Recompensas</p>
+          <div className="rounded-clay-sm p-4 mb-6 space-y-2.5"
+            style={{ background: '#0D0D2A', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.5)' }}>
+            <p className="text-[10px] font-display font-black text-text-dim uppercase tracking-widest mb-3">Recompensas</p>
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-2 text-sm text-text-muted">
-                <Coins size={15} className="text-gold" /> Moedas
+              <span className="flex items-center gap-2 text-sm text-text-muted font-medium">
+                <PixelIcon icon="coin" size={18} /> Moedas
               </span>
-              <span className="stat-num font-bold text-gold">+{reward.coins}</span>
+              <span className="stat-num font-black" style={{ color: '#F5A623' }}>+{reward.coins}</span>
             </div>
             {reward.shields > 0 && (
               <div className="flex items-center justify-between">
-                <span className="flex items-center gap-2 text-sm text-text-muted">
-                  <Shield size={15} className="text-cyan" /> Escudos de Streak
+                <span className="flex items-center gap-2 text-sm text-text-muted font-medium">
+                  <PixelIcon icon="shield" size={18} /> Escudos
                 </span>
-                <span className="stat-num font-bold text-cyan">+{reward.shields}</span>
+                <span className="stat-num font-black" style={{ color: '#00D4FF' }}>+{reward.shields}</span>
               </div>
             )}
             {reward.tokens > 0 && (
               <div className="flex items-center justify-between">
-                <span className="flex items-center gap-2 text-sm text-text-muted">
-                  <RefreshCw size={15} className="text-purple" /> Token de Recuperação
+                <span className="flex items-center gap-2 text-sm text-text-muted font-medium">
+                  <PixelIcon icon="gem" size={18} /> Token
                 </span>
-                <span className="stat-num font-bold text-purple">+{reward.tokens}</span>
+                <span className="stat-num font-black" style={{ color: '#9B7FE8' }}>+{reward.tokens}</span>
               </div>
             )}
           </div>
 
           <button onClick={onClose}
-            className="w-full py-3.5 rounded-2xl font-black text-sm transition-all hover:scale-105 active:scale-95"
-            style={{ background: 'linear-gradient(135deg, #8b5cf6, #f59e0b)', color: '#000' }}>
-            Continuar Jornada ⚡
+            className="clay-btn clay-btn-gold w-full py-3.5 text-sm font-display font-black">
+            ⚔️ Continuar Jornada
           </button>
         </div>
       </motion.div>
