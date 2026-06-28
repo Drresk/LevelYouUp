@@ -6,6 +6,27 @@
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+-- ── FINANCIAL CATEGORIES ─────────────────────────────
+CREATE TABLE IF NOT EXISTS financial_categories (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  name TEXT NOT NULL,
+  icon_key TEXT NOT NULL DEFAULT 'coin',
+  color TEXT NOT NULL DEFAULT '#F5A623',
+  monthly_limit NUMERIC(10,2),
+  is_income BOOLEAN DEFAULT FALSE,
+  sort_order INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_financial_categories_user ON financial_categories(user_id);
+ALTER TABLE financial_categories ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users manage own categories" ON financial_categories;
+CREATE POLICY "Users manage own categories" ON financial_categories
+  USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- Add category_id to transactions (nullable, old rows keep text category)
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS category_id UUID REFERENCES financial_categories(id) ON DELETE SET NULL;
+
 -- ── UPDATE PROFILES ──────────────────────────────────
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS username TEXT UNIQUE;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS bio TEXT;

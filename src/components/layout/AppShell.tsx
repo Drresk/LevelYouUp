@@ -1,16 +1,17 @@
 import Sidebar from './Sidebar'
 import BottomNav from './BottomNav'
-import FloatingChatButton from './FloatingChatButton'
+import ChatBar from './ChatBar'
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen" style={{ background: '#0D0D1A' }}>
       <Sidebar />
-      <main className="md:ml-64 pb-20 md:pb-0 min-h-screen">
+      {/* md:ml-60 for sidebar, pb-36 on mobile (nav 64px + chatbar ~90px) */}
+      <main className="md:ml-60 pb-36 md:pb-20 min-h-screen">
         {children}
       </main>
+      <ChatBar />
       <BottomNav />
-      <FloatingChatButton />
     </div>
   )
 }

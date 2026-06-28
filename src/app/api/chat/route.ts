@@ -15,41 +15,76 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ reply: '⚠️ Configure sua chave Groq em /configuracoes.', action: null })
   }
 
+  // Load user's financial categories for dynamic classification
+  const { data: userCategories } = await supabase
+    .from('financial_categories')
+    .select('id, name, icon_key, color, is_income')
+    .eq('user_id', user.id)
+    .order('is_income')
+    .order('sort_order')
+
+  const expenseCats = (userCategories || []).filter(c => !c.is_income)
+  const incomeCats = (userCategories || []).filter(c => c.is_income)
+
   let reply = ''
   let action: string | null = null
 
   try {
-    const parsed = await classifyIntent(message, groqKey)
+    const parsed = await classifyIntent(message, groqKey, expenseCats, incomeCats)
 
     switch (parsed.intent) {
       case 'register_expense': {
-        const { amount, category, description } = parsed.data as { amount: number; category: string; description: string }
-        await supabase.from('transactions').insert({ user_id: user.id, type: 'expense', amount, category: category.toUpperCase(), description: description || message })
+        const { amount, category_name, description } = parsed.data as { amount: number; category_name: string; description: string }
+        // Match to user's category (case-insensitive)
+        const matchedCat = expenseCats.find(c => c.name.toLowerCase() === (category_name || '').toLowerCase())
+          || expenseCats.find(c => c.name.toLowerCase().includes((category_name || '').toLowerCase()))
+          || expenseCats.find(c => c.name === 'Avulso')
+          || expenseCats[0]
+
+        await supabase.from('transactions').insert({
+          user_id: user.id,
+          type: 'expense',
+          amount,
+          category: matchedCat?.name || category_name || 'Avulso',
+          category_id: matchedCat?.id || null,
+          description: description || message,
+        })
 
         // Budget alert
         const now = new Date()
         const monthStart = format(new Date(now.getFullYear(), now.getMonth(), 1), 'yyyy-MM-dd')
-        const [{ data: monthTx }, { data: goal }] = await Promise.all([
-          supabase.from('transactions').select('amount,category').eq('user_id', user.id).eq('type', 'expense').gte('created_at', monthStart),
-          supabase.from('financial_goals').select('monthly_limit').eq('user_id', user.id).eq('category', category.toUpperCase()).single(),
-        ])
-        reply = `✅ R$${Number(amount).toFixed(2)} em ${category.toUpperCase()}`
-        if (goal && monthTx) {
-          const total = monthTx.filter((t) => t.category === category.toUpperCase()).reduce((s, t) => s + Number(t.amount), 0)
-          const pct = (total / goal.monthly_limit) * 100
-          if (pct >= 100) reply += `\n\n🚨 Limite de ${category.toUpperCase()} ultrapassado!`
-          else if (pct >= 80) reply += `\n\n⚠️ ${pct.toFixed(0)}% do limite de ${category.toUpperCase()} usado`
+        if (matchedCat?.id) {
+          const { data: monthTx } = await supabase.from('transactions').select('amount').eq('user_id', user.id).eq('type', 'expense').eq('category_id', matchedCat.id).gte('created_at', monthStart)
+          const total = (monthTx || []).reduce((s, t) => s + Number(t.amount), 0)
+          // Check against financial_categories monthly_limit
+          const { data: catData } = await supabase.from('financial_categories').select('monthly_limit').eq('id', matchedCat.id).single()
+          if (catData?.monthly_limit) {
+            const pct = (total / catData.monthly_limit) * 100
+            if (pct >= 100) reply += `\n\n🚨 Limite de ${matchedCat.name} ultrapassado!`
+            else if (pct >= 80) reply += `\n\n⚠️ ${pct.toFixed(0)}% do limite de ${matchedCat.name} usado`
+          }
         }
-        action = 'registered_expense'
 
+        reply = `✅ R$${Number(amount).toFixed(2)} em ${matchedCat?.name || category_name}` + reply
+        action = 'registered_expense'
         await supabase.from('user_achievements').upsert({ user_id: user.id, achievement_key: 'first_expense' }, { onConflict: 'user_id,achievement_key' })
         break
       }
 
       case 'register_income': {
-        const { amount, category, description } = parsed.data as { amount: number; category: string; description: string }
-        await supabase.from('transactions').insert({ user_id: user.id, type: 'income', amount, category: (category || 'FREELA').toUpperCase(), description: description || message })
-        reply = `✅ Entrada de R$${Number(amount).toFixed(2)} em ${(category || 'FREELA').toUpperCase()}`
+        const { amount, category_name, description } = parsed.data as { amount: number; category_name: string; description: string }
+        const matchedCat = incomeCats.find(c => c.name.toLowerCase() === (category_name || '').toLowerCase())
+          || incomeCats[0]
+
+        await supabase.from('transactions').insert({
+          user_id: user.id,
+          type: 'income',
+          amount,
+          category: matchedCat?.name || category_name || 'Freelance',
+          category_id: matchedCat?.id || null,
+          description: description || message,
+        })
+        reply = `✅ +R$${Number(amount).toFixed(2)} em ${matchedCat?.name || category_name}`
         action = 'registered_income'
         break
       }
