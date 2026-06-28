@@ -9,20 +9,27 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@base-ui/react": "^1.6.0",
     "@ducanh2912/next-pwa": "^10.2.9",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.49.4",
     "canvas-confetti": "^1.9.3",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "date-fns": "^4.1.0",
+    "cmdk": "^1.1.1",
+    "date-fns": "^4.4.0",
     "framer-motion": "^11.18.2",
     "groq-sdk": "^1.3.0",
     "lucide-react": "^0.477.0",
     "next": "14.2.29",
     "react": "^18",
+    "react-bits": "^1.0.5",
+    "react-day-picker": "^10.0.1",
     "react-dom": "^18",
     "recharts": "^2.15.2",
+    "shadcn": "^4.12.0",
     "tailwind-merge": "^2.6.0",
+    "tw-animate-css": "^1.4.0",
     "web-push": "^3.6.7"
   },
   "devDependencies": {
