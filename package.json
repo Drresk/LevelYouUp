@@ -23,7 +23,6 @@
     "lucide-react": "^0.477.0",
     "next": "14.2.29",
     "react": "^18",
-    "react-bits": "^1.0.5",
     "react-day-picker": "^10.0.1",
     "react-dom": "^18",
     "recharts": "^2.15.2",

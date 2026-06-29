@@ -138,8 +138,11 @@ export default function LoginPage() {
 
             <button type="submit" disabled={loading}
               className="clay-btn clay-btn-purple w-full py-3.5 text-sm flex items-center justify-center gap-2 disabled:opacity-60 mt-2">
-              {loading && <Loader2 size={16} className="animate-spin" />}
-              {mode === 'login' ? '⚔️ Entrar' : mode === 'signup' ? '✨ Criar conta' : '🔗 Enviar link'}
+              {loading
+                ? <Loader2 size={16} className="animate-spin" />
+                : <PixelIcon icon={mode === 'login' ? 'sword' : mode === 'signup' ? 'star' : 'lightning'} size={14} />
+              }
+              {mode === 'login' ? 'Entrar' : mode === 'signup' ? 'Criar conta' : 'Enviar link'}
             </button>
           </form>
         </div>

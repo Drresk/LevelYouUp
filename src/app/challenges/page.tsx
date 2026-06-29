@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Coins, Trophy } from 'lucide-react'
+import { Coins } from 'lucide-react'
 import AppShell from '@/components/layout/AppShell'
+import PixelIcon from '@/components/ui/PixelIcon'
 import { WeeklyChallenge, ChallengePool } from '@/types'
-import { format, startOfWeek, endOfWeek, addDays } from 'date-fns'
+import { format, startOfWeek, endOfWeek } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
 export default function ChallengesPage() {
@@ -29,27 +30,30 @@ export default function ChallengesPage() {
     <AppShell>
       <div className="max-w-2xl mx-auto px-4 py-6">
         <div className="mb-5">
-          <h1 className="text-2xl font-black text-text-base">🎯 Desafios da Semana</h1>
+          <h1 className="text-2xl font-black font-display text-text-base flex items-center gap-2">
+            <PixelIcon icon="scroll" size={24} /> Desafios da Semana
+          </h1>
           <p className="text-text-dim text-xs mt-0.5">
             {format(weekStart, "d 'de' MMM", { locale: ptBR })} – {format(weekEnd, "d 'de' MMM", { locale: ptBR })}
           </p>
         </div>
 
         {/* Progress */}
-        <div className="rpg-card-gold p-4 rounded-2xl mb-5 flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-gold-muted border border-gold/30 flex items-center justify-center">
-            <Trophy size={24} className="text-gold" />
+        <div className="rpg-card-gold p-4 mb-5 flex items-center gap-4">
+          <div className="w-14 h-14 rounded-clay-sm flex items-center justify-center flex-shrink-0"
+            style={{ background: 'rgba(245,166,35,0.15)', border: '1px solid rgba(245,166,35,0.3)' }}>
+            <PixelIcon icon="trophy" size={28} />
           </div>
           <div className="flex-1">
-            <p className="text-sm font-bold text-text-base mb-1">{completed} / 3 completos</p>
+            <p className="text-sm font-bold font-display text-text-base mb-1">{completed} / 3 completos</p>
             <div className="w-full bg-surface-3 rounded-full h-2 overflow-hidden">
               <motion.div initial={{ width: 0 }} animate={{ width: `${(completed / 3) * 100}%` }}
                 transition={{ duration: 0.8 }}
                 className="h-full rounded-full"
-                style={{ background: 'linear-gradient(90deg, #f59e0b, #fbbf24)' }} />
+                style={{ background: 'linear-gradient(90deg, #F5A623, #FFD166)' }} />
             </div>
           </div>
-          {completed === 3 && <span className="text-2xl animate-bounce">🎉</span>}
+          {completed === 3 && <PixelIcon icon="crown" size={28} className="animate-bounce flex-shrink-0" />}
         </div>
 
         {/* Challenges */}

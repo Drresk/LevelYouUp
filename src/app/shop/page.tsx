@@ -4,12 +4,13 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Loader2, Coins } from 'lucide-react'
 import AppShell from '@/components/layout/AppShell'
+import PixelIcon from '@/components/ui/PixelIcon'
 import { ShopItem, UserWallet, RARITY_COLOR, Rarity } from '@/types'
 import { cn } from '@/lib/utils/cn'
 
 const TYPE_LABEL: Record<string, string> = {
-  head: '🪖 Cabeça', face: '😎 Rosto', body: '🥋 Corpo', accessory: '💎 Acessório',
-  streak_shield: '🛡️ Consumível', recovery_token: '🔄 Consumível', xp_boost: '⚡ Consumível',
+  head: 'Cabeça', face: 'Rosto', body: 'Corpo', accessory: 'Acessório',
+  streak_shield: 'Consumível', recovery_token: 'Consumível', xp_boost: 'Consumível',
 }
 
 const RARITY_LABEL: Record<Rarity, string> = { common: 'Comum', rare: 'Raro', epic: 'Épico', legendary: 'Lendário' }
@@ -58,12 +59,15 @@ export default function ShopPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <div>
-            <h1 className="text-2xl font-black text-text-base">🏪 Shop</h1>
+            <h1 className="text-2xl font-black font-display text-text-base flex items-center gap-2">
+              <PixelIcon icon="chest" size={24} /> Shop
+            </h1>
             <p className="text-text-dim text-xs mt-0.5">Gaste suas moedas com sabedoria</p>
           </div>
           {wallet && (
-            <div className="flex items-center gap-2 bg-gold-muted border border-gold/30 px-3 py-2 rounded-xl shadow-gold-sm">
-              <span className="text-lg">🪙</span>
+            <div className="flex items-center gap-2 px-3 py-2 rounded-clay-sm"
+              style={{ background: 'rgba(245,166,35,0.15)', border: '1px solid rgba(245,166,35,0.3)' }}>
+              <PixelIcon icon="coin" size={18} />
               <span className="stat-num font-black text-gold text-lg">{wallet.coins.toLocaleString('pt-BR')}</span>
             </div>
           )}
@@ -85,7 +89,7 @@ export default function ShopPage() {
             <button key={f} onClick={() => setFilter(f)}
               className={cn('px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all flex-shrink-0',
                 filter === f ? 'bg-purple text-white' : 'bg-surface-2 text-text-muted hover:bg-surface-3')}>
-              {f === 'all' ? '🎁 Tudo' : TYPE_LABEL[f] || f}
+              {f === 'all' ? 'Tudo' : TYPE_LABEL[f] || f}
             </button>
           ))}
         </div>

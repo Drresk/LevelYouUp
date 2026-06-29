@@ -33,7 +33,7 @@ const config: Config = {
         'text-dim': '#44446A',
       },
       fontFamily: {
-        display: ['Nunito', 'system-ui', 'sans-serif'],
+        display: ['Fredoka One', 'system-ui', 'sans-serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'Consolas', 'monospace'],
       },

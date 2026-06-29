@@ -6,7 +6,8 @@ import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Timer, TrendingUp, TrendingDown, Calendar, ArrowRight, Target, Coins } from 'lucide-react'
+import { Timer, TrendingUp, TrendingDown, ArrowRight, Coins } from 'lucide-react'
+import PixelIcon from '@/components/ui/PixelIcon'
 import { motion } from 'framer-motion'
 import XPBar from '@/components/ui/XPBar'
 import StreakBadge from '@/components/ui/StreakBadge'
@@ -79,14 +80,16 @@ export default function DashboardClient({ profile: initialProfile }: { profile: 
       {/* Greeting + Character Card */}
       <div>
         <p className="text-xs text-text-dim mb-1">{format(new Date(), "EEEE, d 'de' MMMM", { locale: ptBR })}</p>
-        <h1 className="text-2xl font-black text-text-base mb-4">{greeting(profile?.name || '')}</h1>
+        <h1 className="text-2xl font-black font-display text-text-base mb-4">{greeting(profile?.name || '')}</h1>
         <CharacterCard profile={profile} avatar={avatar} wallet={wallet} />
       </div>
 
       {/* Skills */}
-      <div className="rpg-card p-5">
+      <div className="clay-card p-5">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-black text-text-base">⚔️ Skills</h2>
+          <h2 className="font-black font-display text-text-base flex items-center gap-2">
+            <PixelIcon icon="sword" size={20} /> Skills
+          </h2>
           <Link href="/skills" className="text-xs text-purple hover:underline flex items-center gap-1">Ver todas <ArrowRight size={11} /></Link>
         </div>
         {skills.length === 0 ? (
@@ -122,10 +125,10 @@ export default function DashboardClient({ profile: initialProfile }: { profile: 
       <WaterWidget />
 
       {/* Challenges */}
-      <div className="rpg-card-gold p-5 rounded-2xl">
+      <div className="rpg-card-gold p-5">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-black text-text-base flex items-center gap-2">
-            <Target size={16} className="text-gold" /> Desafios da Semana
+          <h2 className="font-black font-display text-text-base flex items-center gap-2">
+            <PixelIcon icon="scroll" size={20} /> Desafios da Semana
           </h2>
           <Link href="/challenges" className="text-xs text-gold hover:underline flex items-center gap-1">{completedChallenges}/3 <ArrowRight size={11} /></Link>
         </div>
@@ -157,20 +160,22 @@ export default function DashboardClient({ profile: initialProfile }: { profile: 
       </div>
 
       {/* Financial */}
-      <div className="rpg-card p-5">
+      <div className="clay-card p-5">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-black text-text-base">💰 Financeiro</h2>
+          <h2 className="font-black font-display text-text-base flex items-center gap-2">
+            <PixelIcon icon="wallet" size={20} /> Financeiro
+          </h2>
           <Link href="/financeiro" className="text-xs text-purple hover:underline flex items-center gap-1">Ver tudo <ArrowRight size={11} /></Link>
         </div>
         <div className="grid grid-cols-3 gap-3">
           {[
-            { label: 'Entradas', value: income, icon: TrendingUp, color: 'text-green' },
-            { label: 'Saídas', value: expenses, icon: TrendingDown, color: 'text-danger' },
-            { label: 'Saldo', value: balance, icon: Coins, color: balance >= 0 ? 'text-gold' : 'text-danger' },
-          ].map(({ label, value, icon: Icon, color }) => (
-            <div key={label} className="bg-surface-2 rounded-xl p-3 text-center">
-              <Icon size={14} className={`${color} mx-auto mb-1`} />
-              <p className={`stat-num text-sm font-black ${color}`}>R${Math.abs(value).toFixed(0)}</p>
+            { label: 'Entradas', value: income, lucide: TrendingUp, color: '#00C875' },
+            { label: 'Saídas', value: expenses, lucide: TrendingDown, color: '#FF3B5C' },
+            { label: 'Saldo', value: balance, lucide: Coins, color: balance >= 0 ? '#F5A623' : '#FF3B5C' },
+          ].map(({ label, value, lucide: Icon, color }) => (
+            <div key={label} className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <Icon size={14} style={{ color }} className="mx-auto mb-1" />
+              <p className="stat-num text-sm font-black" style={{ color }}>R${Math.abs(value).toFixed(0)}</p>
               <p className="text-[10px] text-text-dim">{label}</p>
             </div>
           ))}
@@ -178,10 +183,10 @@ export default function DashboardClient({ profile: initialProfile }: { profile: 
       </div>
 
       {/* Calendar */}
-      <div className="rpg-card p-5">
+      <div className="clay-card p-5">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-black text-text-base flex items-center gap-2">
-            <Calendar size={15} className="text-cyan" /> Próximos
+          <h2 className="font-black font-display text-text-base flex items-center gap-2">
+            <PixelIcon icon="calendar" size={20} /> Próximos
           </h2>
           <Link href="/calendario" className="text-xs text-purple hover:underline flex items-center gap-1">Ver todos <ArrowRight size={11} /></Link>
         </div>

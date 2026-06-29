@@ -82,6 +82,31 @@ html, body {
   box-shadow: 8px 8px 20px rgba(255,59,92,0.4), -4px -4px 12px rgba(255,255,255,0.04), inset 0 1px 0 rgba(255,255,255,0.2);
 }
 
+/* ── RPG card aliases (clay variants) ── */
+.rpg-card {
+  background: linear-gradient(145deg, #1A1A3E, #13132A);
+  border-radius: 24px;
+  box-shadow:
+    8px 8px 20px rgba(0,0,0,0.6),
+    -4px -4px 12px rgba(255,255,255,0.04),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.rpg-card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    12px 12px 28px rgba(0,0,0,0.7),
+    -4px -4px 12px rgba(255,255,255,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.rpg-card-gold {
+  border-radius: 24px;
+  background: linear-gradient(145deg, #1E1A0A, #13120A);
+  box-shadow: 8px 8px 20px rgba(0,0,0,0.6), 0 0 0 1px rgba(245,166,35,0.25), inset 0 1px 0 rgba(245,166,35,0.1);
+  border: 1px solid rgba(245,166,35,0.25);
+}
+
 /* ── Clay Buttons ── */
 .clay-btn {
   border-radius: 16px;
